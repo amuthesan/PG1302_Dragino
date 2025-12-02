@@ -13,7 +13,7 @@ We have developed a modern, web-based dashboard to automate the entire configura
 
 ---
 
-## 🚀 Quick Start: Web UI Setup (Recommended)
+## Quick Start: Web UI Setup (Recommended)
 
 The easiest way to set up your gateway is using the **Ark Technology Web Interface**.
 
