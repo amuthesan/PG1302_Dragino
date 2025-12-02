@@ -1,10 +1,21 @@
 #!/bin/bash
 
 # Configuration
-PI_IP="192.168.1.161"
 PI_USER="pi"
 PI_PASS="raspberry"
 REMOTE_DIR="/home/pi/dragino_web_setup"
+
+# Get IP from argument or prompt
+if [ -z "$1" ]; then
+    read -p "Enter Raspberry Pi IP Address: " PI_IP
+else
+    PI_IP=$1
+fi
+
+if [ -z "$PI_IP" ]; then
+    echo "Error: IP Address is required."
+    exit 1
+fi
 
 echo "Deploying to $PI_USER@$PI_IP..."
 

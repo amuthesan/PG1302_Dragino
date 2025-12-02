@@ -14,7 +14,7 @@ class GatewaySetupApp:
         self.notebook.pack(expand=True, fill='both', padx=10, pady=10)
 
         # Variables
-        self.ip_var = tk.StringVar(value="192.168.1.161")
+        self.ip_var = tk.StringVar()
         self.user_var = tk.StringVar(value="pi")
         self.pass_var = tk.StringVar(value="raspberry")
         self.eui_var = tk.StringVar()
@@ -35,7 +35,10 @@ class GatewaySetupApp:
         frame.pack(fill="x", padx=10, pady=10)
 
         ttk.Label(frame, text="IP Address:").grid(row=0, column=0, sticky="w", pady=5)
-        ttk.Entry(frame, textvariable=self.ip_var).grid(row=0, column=1, sticky="ew", pady=5)
+        ip_entry = ttk.Entry(frame, textvariable=self.ip_var)
+        ip_entry.grid(row=0, column=1, sticky="ew", pady=5)
+        ip_entry.insert(0, "192.168.x.x") # Placeholder hint
+        ip_entry.bind("<FocusIn>", lambda args: ip_entry.delete('0', 'end') if ip_entry.get() == "192.168.x.x" else None)
 
         ttk.Label(frame, text="Username:").grid(row=1, column=0, sticky="w", pady=5)
         ttk.Entry(frame, textvariable=self.user_var).grid(row=1, column=1, sticky="ew", pady=5)
