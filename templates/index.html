@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragino PG1302 Setup</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #16a34a;
+            --error: #dc2626;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-running {
+            background-color: var(--success);
+            box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+        }
+
+        .status-stopped {
+            background-color: var(--error);
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+        }
+
+        pre {
+            background-color: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            color: #334155;
+            max-height: 300px;
+            border: 1px solid var(--border-color);
+        }
+
+        .copy-btn {
+            background-color: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 16px;
+            font-size: 0.875rem;
+            width: auto;
+            margin-top: 8px;
+            border-radius: 6px;
+        }
+
+        .copy-btn:hover {
+            background-color: #eff6ff;
+        }
+
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-left-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* New styles for grid layout */
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .status-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <img src="/static/logo.png" alt="Ark Technology" style="height: 60px; margin-bottom: 16px;">
+            <h1>PG1302 Gateway Setup</h1>
+            <p style="color: var(--text-secondary);">Configure your LoRaWAN Basic Station</p>
+        </header>
+
+        <div class="grid-row">
+            <!-- Status Card -->
+            <div class="card status-card" style="margin-bottom: 0;">
+                <h2>System Status</h2>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div>
+                        <div style="margin-bottom: 8px;">
+                            <span id="service-status-indicator" class="status-indicator status-stopped"></span>
+                            <span id="service-status-text" style="font-weight: 600;">Checking Service...</span>
+                        </div>
+                        <div>
+                            <span id="ttn-status-indicator" class="status-indicator status-stopped"></span>
+                            <span id="ttn-status-text" style="font-weight: 600;">Checking TTN...</span>
+                        </div>
+                    </div>
+                    <button onclick="fetchStatus()"
+                        style="width: auto; padding: 8px 16px; font-size: 0.875rem;">Refresh</button>
+                </div>
+            </div>
+
+            <!-- EUI Card -->
+            <div class="card" style="margin-bottom: 0;">
+                <h2>Gateway EUI</h2>
+                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 12px;">
+                    Register on TTN Console:
+                </p>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" id="gateway-eui" readonly value="Loading..."
+                        style="font-family: monospace; letter-spacing: 1px; font-weight: 600; background-color: #f1f5f9;">
+                    <button class="copy-btn" onclick="copyEUI()" style="width: 100%; margin-top: 8px;">Copy EUI</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Card -->
+        <div class="card">
+            <h2>2. Configuration</h2>
+            <form id="config-form" onsubmit="startConfiguration(event)">
+                <div class="grid-row" style="margin-bottom: 0; gap: 20px;">
+                    <div class="form-group">
+                        <label>LNS Server URI</label>
+                        <input type="text" id="lns-uri" value="wss://eu1.cloud.thethings.network:443" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CUPS Server URI</label>
+                        <input type="text" id="cups-uri" value="https://eu1.cloud.thethings.network:443" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>TTN API Key</label>
+                    <input type="text" id="api-key" placeholder="NNSXS...." required>
+                </div>
+                <button type="submit">Configure Gateway</button>
+            </form>
+        </div>
+
+        <!-- Logs Card -->
+        <div class="card">
+            <h2>System Logs</h2>
+            <pre id="logs-area" style="height: 150px; resize: vertical;">Loading logs...</pre>
+        </div>
+    </div>
+
+    <div id="loading-overlay">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <p style="margin-top: 16px; font-weight: 600;">Configuring Gateway...<br><span
+                    style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">This may take a
+                    minute.</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Fetch EUI on load
+        fetch('/api/eui')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('gateway-eui').value = data.eui;
+                } else {
+                    document.getElementById('gateway-eui').value = "Error retrieving EUI";
+                }
+            });
+
+        // Fetch Status
+        function fetchStatus() {
+            fetch('/api/status')
+                .then(res => res.json())
+                .then(data => {
+                    const svcIndicator = document.getElementById('service-status-indicator');
+                    const svcText = document.getElementById('service-status-text');
+                    const ttnIndicator = document.getElementById('ttn-status-indicator');
+                    const ttnText = document.getElementById('ttn-status-text');
+                    const logs = document.getElementById('logs-area');
+
+                    // Service Status
+                    if (data.status === 'running') {
+                        svcIndicator.className = 'status-indicator status-running';
+                        svcText.textContent = 'Service Running';
+                        svcText.style.color = 'var(--success)';
+                    } else {
+                        svcIndicator.className = 'status-indicator status-stopped';
+                        svcText.textContent = 'Service Stopped';
+                        svcText.style.color = 'var(--error)';
+                    }
+
+                    // TTN Status
+                    if (data.ttn_status === 'connected') {
+                        ttnIndicator.className = 'status-indicator status-running';
+                        ttnText.textContent = 'Connected to TTN';
+                        ttnText.style.color = 'var(--success)';
+                    } else if (data.ttn_status === 'connecting') {
+                        ttnIndicator.className = 'status-indicator';
+                        ttnIndicator.style.backgroundColor = '#eab308'; // Yellow
+                        ttnIndicator.style.boxShadow = '0 0 8px #eab308';
+                        ttnText.textContent = 'Connecting...';
+                        ttnText.style.color = '#eab308';
+                    } else if (data.ttn_status === 'hardware_error') {
+                        ttnIndicator.className = 'status-indicator status-stopped';
+                        ttnText.textContent = 'Hardware Error';
+                        ttnText.style.color = 'var(--error)';
+                    } else {
+                        ttnIndicator.className = 'status-indicator status-stopped';
+                        ttnText.textContent = 'Disconnected';
+                        ttnText.style.color = 'var(--text-secondary)';
+                    }
+
+                    logs.textContent = data.logs || "No logs available.";
+                });
+        }
+
+        // Initial status check
+        fetchStatus();
+        setInterval(fetchStatus, 5000); // Poll every 5s
+
+        function copyEUI() {
+            const eui = document.getElementById('gateway-eui');
+            eui.select();
+            document.execCommand('copy');
+            alert('EUI copied to clipboard!');
+        }
+
+        function startConfiguration(e) {
+            e.preventDefault();
+
+            const lns_uri = document.getElementById('lns-uri').value;
+            const cups_uri = document.getElementById('cups-uri').value;
+            const api_key = document.getElementById('api-key').value;
+
+            if (!api_key) {
+                alert('Please enter an API Key');
+                return;
+            }
+
+            document.getElementById('loading-overlay').style.display = 'flex';
+
+            fetch('/api/configure', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lns_uri, cups_uri, api_key })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    if (data.success) {
+                        alert('Configuration Successful!');
+                        fetchStatus();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    alert('Network Error: ' + err);
+                });
+        }
+    </script>
+
+</body>
+
+</html>

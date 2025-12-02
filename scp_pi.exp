@@ -4,9 +4,10 @@ set timeout 300
 set ip [lindex $argv 0]
 set user [lindex $argv 1]
 set password [lindex $argv 2]
-set cmd [lindex $argv 3]
+set src [lindex $argv 3]
+set dest [lindex $argv 4]
 
-spawn ssh -o StrictHostKeyChecking=no $user@$ip $cmd
+spawn scp -o StrictHostKeyChecking=no -r $src $user@$ip:$dest
 expect {
   "password:" { send "$password\r" }
   timeout { puts "Connection timed out"; exit 1 }

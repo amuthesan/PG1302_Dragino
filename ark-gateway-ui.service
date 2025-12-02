@@ -1,0 +1,13 @@
+[Unit]
+Description=Ark Technology Gateway Setup UI
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/pi/dragino_web_setup
+ExecStart=/usr/bin/python3 /home/pi/dragino_web_setup/app.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
