@@ -270,8 +270,14 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>TTN API Key</label>
-                    <input type="text" id="api-key" placeholder="NNSXS...." required>
+                    <label>LNS API Key (TC Key)</label>
+                    <input type="text" id="lns-key" placeholder="NNSXS...." required>
+                </div>
+                <div class="form-group">
+                    <label>CUPS API Key</label>
+                    <input type="text" id="cups-key" placeholder="NNSXS...." required>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Often the same as LNS
+                        Key, but can be different.</small>
                 </div>
                 <button type="submit">Configure Gateway</button>
             </form>
@@ -363,15 +369,16 @@
             alert('EUI copied to clipboard!');
         }
 
-        function startConfiguration(e) {
+        async function startConfiguration(e) {
             e.preventDefault();
 
             const lns_uri = document.getElementById('lns-uri').value;
             const cups_uri = document.getElementById('cups-uri').value;
-            const api_key = document.getElementById('api-key').value;
+            const lnsKey = document.getElementById('lns-key').value.trim();
+            const cupsKey = document.getElementById('cups-key').value.trim();
 
-            if (!api_key) {
-                alert('Please enter an API Key');
+            if (!lns_uri || !cups_uri || !lnsKey || !cupsKey) {
+                alert('Please fill in all fields');
                 return;
             }
 
@@ -380,7 +387,7 @@
             fetch('/api/configure', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lns_uri, cups_uri, api_key })
+                body: JSON.stringify({ lns_uri, cups_uri, lns_key: lnsKey, cups_key: cupsKey })
             })
                 .then(res => res.json())
                 .then(data => {
