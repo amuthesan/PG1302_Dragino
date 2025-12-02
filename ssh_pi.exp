@@ -1,0 +1,14 @@
+#!/usr/bin/expect -f
+
+set timeout 300
+set ip "192.168.1.161"
+set user "pi"
+set password "raspberry"
+set cmd [lindex $argv 0]
+
+spawn ssh -o StrictHostKeyChecking=no $user@$ip $cmd
+expect {
+  "password:" { send "$password\r" }
+  timeout { puts "Connection timed out"; exit 1 }
+}
+expect eof
