@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [v0.1.2] - 2025-12-02
+
+### Changed
+- Updated UI status indicators: "Disconnected" status now displays in red for better visibility.
+
 ## [v0.1.1-beta] - 2025-12-02
 
 ### Added
