@@ -35,7 +35,7 @@ Once deployed, open your web browser and navigate to:
 ### 3. Configure via UI
 1.  **System Status**: Check if the service is running.
 2.  **Gateway EUI**: Copy the EUI displayed on the dashboard and register your gateway on the **The Things Network (TTN)** console.
-3.  **Configuration**: Enter your **TTN API Key** and click "Configure Gateway".
+3.  **Configuration**: Enter your **LNS API Key** and **CUPS API Key** (usually the same, but can be separate). Click "Configure Gateway".
 4.  **Monitor**: Watch the logs and status indicators to confirm connection (Green = Connected).
 
 **Persistence**: The Web UI and the Gateway service are configured to start automatically on boot.
@@ -62,7 +62,7 @@ sudo dpkg -i draginofwd-32bit.deb
 ### 3. Register on TTN
 Get your Gateway EUI:
 ```bash
-cat /sys/class/net/eth0/address | sed 's/://g' | sed 's/\(.\{6\}\)\(.\{10\}\)/\1fffe\2/'
+cat /sys/class/net/eth0/address | sed 's/://g' | sed 's/\(.\{6\}\)\(.\{6\}\)/\1fffe\2/'
 ```
 Register this EUI on TTN and generate an API Key.
 
@@ -73,6 +73,9 @@ sudo sed -i 's|/dev/spidev1.0|/dev/spidev0.0|g' /etc/station/station.conf
 
 # Link reset script
 sudo ln -sf /usr/bin/rinit.sh /etc/station/rinit.sh
+
+# Fix binary name (Package installs station_sx1302 but service expects station)
+sudo ln -sf /usr/bin/station_sx1302 /usr/bin/station
 
 # Configure Credentials (replace placeholders)
 echo 'wss://eu1.cloud.thethings.network:443' | sudo tee /etc/station/tc.uri
